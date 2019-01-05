@@ -1,39 +1,52 @@
-library(ggcorrplot)
+
+#dependencias
 install.packages("ggplot2",dependencies=TRUE)
 library(ggplot2)
+library(ggcorrplot)
+library(corrplot)
 install.packages("ggExtra",dependencies=TRUE)
 library(ggExtra)
-wine <- read.csv2("winequality-red.csv", sep=",")
 
-data("wine", package = "ggplot2")
+library(ggcorrplot)
+install.packages("magrittr") # only needed the first time you use it
+install.packages("dplyr")    # alternative installation of the %>%
+library(magrittr) # need to run every time you start R and want to use %>%
+library(dplyr)    # alternative, this also loads %
+
+library(pander)
+library(caret)
+library(mlbench)
+library(doParallel)
+
+library(corrplot)
+
+
+wine <- read.csv2("winequality-red.csv", sep=",")
 head(wine)
 # Compute a correlation matrix
 
-corr <- round(cor(wine), 1)
-head(corr[, 1:12])
+#corr
+#Correlogram
+ggcorrplot(corr, hc.order = TRUE, 
+           type = "lower", 
+           lab = TRUE, 
+           lab_size = 2, 
+           method="circle", 
+           colors = custom_colors, 
+           title="Correlogram of wine measurements", 
+           ggtheme=theme_bw)
 
 
-library(RColorBrewer)
-
-
-# Load the data into variable d
-d=read.csv("winequality-red.csv")
-
-#Create custom colors vector
-custom_colors=c("#E32800", "#FDB205","#FDF505","#009BDF","#E3FD05","#A7FD05","#7CBE00","#639700","#972000","#871D00","#50FF95","#00DEAF","#00B891","#00B5B8","#0080B8","#0063E8","#0047A7","#9F55FF","#C69BFF","#D69BFF","#B956FE","#DF56FE","#FE5681","#9BDF00")
-glimpse(head(d,5))
+M <- cor(wine)
+M <- M - sign(M) * (abs(M) %% 0.01)
+corrplot(M, method = "circle", type = "upper", order = "original",
+         addCoef.col = "white", number.cex = 0.8,
+         sig.level = 0.05, insig = "blank", diag = FALSE)
 
 #Integridad
-na_count <-sapply(d, function(y) sum(length(which(is.na(y)))))
+na_count <-sapply(wine, function(y) sum(length(which(is.na(y)))))
 na_count <- data.frame(na_count)
 na_count
-#Visualizaciones por atributos
-d$pH[as.character(d$pH)==""] <- NA
-#Create histogram plot with variable and label parameters
-ggplot(d, aes(x=density, fill=pH))+
-  geom_histogram(binwidth=1, alpha=.5, position="dodge")+
-  labs(y="pH por denstidad",x="densidad",title="Participant Numbers By Age (Gender)")+
-  scale_fill_manual(values=custom_colors,
-                    name="pH\n",
-                    #breaks=c("Female", "Male", "NA"),
-                    labels=c("Female", "Male", "NA"))
+
+
+
