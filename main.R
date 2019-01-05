@@ -41,6 +41,12 @@ str(wine2)
 #   Preprocesado
 #---------------------
 
+#integridad
+
+na_count <-sapply(wine, function(y) sum(length(which(is.na(y)))))
+na_count <- data.frame(na_count)
+na_count
+
 # correlacion
 # hacemos que los resultados sean reproducibles
 set.seed(123)
