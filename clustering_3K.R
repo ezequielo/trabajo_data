@@ -41,7 +41,7 @@ dev.off()
 fviz_cluster(k.means.wine, data = wine, ellipse.type =  "convex")+
   theme_minimal()
 
-fviz_cluster(k.means.fit, data = wine.stand, ellipse.type =  "convex")+
+fviz_cluster(k.means.fit, data = wine.stand, ellipse.type =  "convex",stand = FALSE, frame.type = "norm")+
   theme_minimal()
 
 
@@ -112,3 +112,11 @@ dev.off()
 ##
 
 #Conclusion k=3
+
+
+res.mca <- MCA(wine.stand, graph=FALSE)
+fviz_mca_var(res.mca)
+fviz_mca_var(res.mca, alpha.var = "contrib") +
+  theme_minimal()
+
+
