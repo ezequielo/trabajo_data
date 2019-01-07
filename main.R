@@ -2,6 +2,9 @@ library(caret)
 library(mlbench)
 library(doParallel)
 library(corrplot)
+library(ROCR)
+library(pROC)
+
 
 #---------------------
 #   Carga de datos
@@ -30,10 +33,13 @@ str(wine2)
 # discretizamos la columna quality en tres posibles valores: bad, average y good
 # para poder convertirlo en un problema de clasificacion
 wine2 <- wine
-wine2$quality <- ifelse(wine$quality < 5, 'bad', ifelse(wine$quality < 7, 'average', 'good'))
+wine2$quality <- ifelse(wine$quality < 6, 'bad', 'good')
+
 print(head(wine2, 10))
 # podemos ver que el tipo de wine2 ahora es una etiqueta
 str(wine2)
+barplot(table(wine$quality))
+barplot(table(wine2$quality))
 
 
 
@@ -78,11 +84,14 @@ test  <- wine2[-trainIndex,]
 registerDoParallel(cores=8)
 
 # k-fold cross-validation con k=10
-control <- trainControl(method = "cv", number = 10, allowParallel = TRUE)
+control <- trainControl(method = "cv", number = 10, allowParallel = TRUE, classProbs = TRUE, summaryFunction = twoClassSummary)
 
-# entrenamos modelos
+# metric
+# metric = "ROC"
+
 # naive bayes
 nb_model <- train(quality ~ ., training, method="naive_bayes", trControl=control)
+print(nb_model)
 
 # neural network
 nn_model <- train(quality ~ ., training, method = 'nnet', trControl = control)
@@ -96,7 +105,65 @@ near_model <- train(quality ~ ., training, method = "knn", trControl = control)
 # svm
 svm_model <- train(quality ~ ., training, method = "svmLinear2",  trControl = control, probability = TRUE)
 
-# TODO: model tunning, cambiar parametros, etc (esto es mas avanzado asi que se hara lo ultimo si queda tiempo)
-# TODO: comparar modelos (curvas ROC, AUC)
-# TODO: hacer los blind tests para ver como de buenos son realmente los modelos creados anteriormente
+
+# comparamos los modelos obtenidos
+models <- list(
+  nb = nb_model,
+  nn = nn_model,
+  dt = dt_model,
+  near = near_model,
+  svm = svm_model
+)
+resamples <- resamples(models)
+print(resamples)
+summary(resamples) 
+bwplot(resamples, metric = "ROC")  
+dotplot(resamples, metric = "ROC")
+
+xyplot(resamples)
+
+# podemos ver como de buenos son cada uno de los modelos entrenados con los diagramas que muestran
+# el valor del area bajo la curva ROC
+
+
+# blind tests
+
+nbProb <- predict(nb_model, test, type = 'prob')
+nbPrediction <- prediction(nbProb[,2], test$quality)
+nbPerformance <- performance(nbPrediction, 'tpr', 'fpr')
+
+nnProb <- predict(nn_model, test, type = 'prob')
+nnPrediction <- prediction(nnProb[,2], test$quality)
+nnPerformance <- performance(nnPrediction, 'tpr', 'fpr')
+
+dtProb <- predict(dt_model, test, type = 'prob')
+dtPrediction <- prediction(dtProb[,2], test$quality)
+dtPerformance <- performance(dtPrediction, 'tpr', 'fpr')
+
+nearProb <- predict(near_model, test, type = 'prob')
+nearPrediction <- prediction(nearProb[,2], test$quality)
+nearPerformance <- performance(nearPrediction, 'tpr', 'fpr')
+
+svmProb <- predict(svm_model, test, type = 'prob')
+svmPrediction <- prediction(svmProb[,2], test$quality)
+svmPerformance <- performance(svmPrediction, 'tpr', 'fpr')
+
+
+
+plot(nbPerformance, col = "orange", main = "ROC curves")
+plot(dtPerformance, add = TRUE, col = "blue")
+plot(nnPerformance, add = TRUE, col = "red")
+plot(nearPerformance, add = TRUE, col = "green")
+plot(svmPerformance, add = TRUE, col = "pink")
+legend("bottomright", title= "Predictors",
+       legend = c("NB", "DT", "NN", "kNN", "SVM"), 
+       col=c("orange", "blue", "red", "green", "pink"), lty=1, cex=0.8)
+
+
+
+
+pred_svm <- predict(svm_model, newdata=test, type="prob")
+
+result_roc_svm <- roc(test$quality, pred_svm)
+
 
