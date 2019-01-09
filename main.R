@@ -21,8 +21,8 @@ str(wine)
 # discretizamos la columna quality en tres posibles valores: bad, average y good
 # para poder convertirlo en un problema de clasificacion
 wine2 <- wine
-wine2$quality <- ifelse(wine$quality < 5, 'bad', ifelse(wine$quality < 7, 'average', 'good'))
-wine2$quality <- ordered(wine2$quality, levels = c('bad', 'average', 'good')) # ordenados para visualizaciones
+wine2$quality <- ifelse(wine$quality < 6, 'bad', 'good')
+wine2$quality <- ordered(wine2$quality, levels = c('bad', 'good')) # ordenados para visualizaciones
 print(head(wine2, 10))
 # podemos ver que el tipo de wine2 ahora es una etiqueta
 str(wine2)
@@ -34,7 +34,7 @@ str(wine2)
 
 # Distribución de la calidad en los vinos del dataset
 ggplot(data = wine, aes(x = quality)) + geom_bar(width = 1, color = 'black',fill = I('red'))
-ggplot(data = wine2, aes(x = quality)) + geom_bar(width = 1, color = 'black',fill = I('red'))
+grid.arrange(ggplot(data = wine2, aes(x = quality)) + geom_bar(width = 1, color = 'black',fill = I('red')), top="Distribución de ejemplos por clase")
 
 #Distribución de la acidez fija
 grid.arrange(ggplot(wine, aes( x = 1, y = fixed.acidity ) ) + geom_jitter(alpha = 0.1 ) +
@@ -55,14 +55,11 @@ grid.arrange(ggplot(wine, aes( x = 1, y = citric.acid ) ) + geom_jitter(alpha = 
              ncol = 2, top="Distribución de los valores del ácido cítrico")
 
 #Distribución del azucar residual
-grid.arrange(ggplot(wine, aes( x = 1, y = residual.sugar ) ) + geom_jitter(alpha = 0.1 ) +
-             geom_boxplot(alpha = 0.2, color = 'red' ),
-             ggplot(data = wine, aes(x = residual.sugar)) + geom_histogram(binwidth = 0.1, color = 'black',fill = I('red')),
-             ggplot(wine, aes( x = 1, y = residual.sugar ) ) + geom_jitter(alpha = 0.1 ) +
+imagen = grid.arrange(ggplot(wine, aes( x = 1, y = residual.sugar ) ) + geom_jitter(alpha = 0.1 ) +
              geom_boxplot(alpha = 0.2, color = 'red' ) + scale_y_continuous(lim = c(1,8)),
              ggplot(data = wine, aes(x = residual.sugar)) + geom_histogram(binwidth = 0.1, color = 'black',fill = I('red')) +
              scale_x_continuous(lim = c(1,8)),
-             ncol = 4, top="Distribución de los valores del azúcar residual")
+             ncol = 2, top="Distribución de los valores del azúcar residual")
 
 #Distribución de los cloruros
 grid.arrange(ggplot(wine, aes( x = 1, y = chlorides ) ) + geom_jitter(alpha = 0.1 ) +
@@ -136,8 +133,6 @@ ggplot(data=wine2, aes(x=as.factor(quality), y=residual.sugar)) + geom_jitter( a
 ggplot(wine2, aes( x = volatile.acidity, y = alcohol, color=quality)) + geom_jitter(alpha = 1 ) +
         scale_color_manual(values=c("red", "green", "blue"))
      
-
-
 # TODO clustering como parte de la visualización
 # puede ser que el número de etiquetas (bad, average y good) se vea mas claro en este apartado
 
