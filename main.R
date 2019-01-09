@@ -30,7 +30,7 @@ str(wine2)
 # puede ser que el número de etiquetas (bad, average y good) se vea mas claro en este apartado
 
 
-# discretizamos la columna quality en tres posibles valores: bad, average y good
+# discretizamos la columna quality en tres posibles valores: bad y good
 # para poder convertirlo en un problema de clasificacion
 wine2 <- wine
 wine2$quality <- ifelse(wine$quality < 6, 'bad', 'good')
@@ -126,13 +126,16 @@ summary(resamples)
 bwplot(resamples, metric = "ROC")  
 dotplot(resamples, metric = "ROC")
 
-xyplot(resamples)
-
 # podemos ver como de buenos son cada uno de los modelos entrenados con los diagramas que muestran
 # el valor del area bajo la curva ROC
 
 
+#---------------------
 # blind tests
+#---------------------
+
+# hacemos prediciones con el conjunto de test para cada modelo
+# calculamos una prediccion y medimos el rendimiento:
 
 nbProb <- predict(nb_model, test, type = 'prob')
 nbPrediction <- prediction(nbProb[,2], test$quality)
@@ -155,7 +158,7 @@ svmPrediction <- prediction(svmProb[,2], test$quality)
 svmPerformance <- performance(svmPrediction, 'tpr', 'fpr')
 
 
-
+# pintamos las curvas roc
 plot(nbPerformance, col = "orange", main = "ROC curves")
 plot(dtPerformance, add = TRUE, col = "blue")
 plot(nnPerformance, add = TRUE, col = "red")
@@ -165,11 +168,8 @@ legend("bottomright", title= "Predictors",
        legend = c("NB", "DT", "NN", "kNN", "SVM"), 
        col=c("orange", "blue", "red", "green", "pink"), lty=1, cex=0.8)
 
-
-
-
-pred_svm <- predict(svm_model, newdata=test, type="prob")
-
-result_roc_svm <- roc(test$quality, pred_svm)
+# como podemos ver, el rendimiento de los modelos ha sido practicamente igual 
+# al de los test, el DT sigue siendo el mejor, a continuacion tenemos nb, nn y svm 
+# con valores parecidos y por ultimo el knn con el peor valor
 
 
