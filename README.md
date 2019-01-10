@@ -17,9 +17,15 @@ En la carpeta se recogen las gráficas de:
 Para el preprocesado se han llevado a cabo los siguientes estudios:
 - Correlación de variables
 - Integridad de los datos
-- División de los datos (70% Train y 30% Test)
 
 ## Propuestas
+
+### División de los datos
+Hemos determinado que los datos los vamos a dividir en los siguientes porcentajes:
+- Train: 70%
+- Test: 30%
+
+### Algoritmos
 Los algoritmos elegidos para la posterior extracción de los modelos han sido:
 - Naive Bayes
 - Redes Neuronales
@@ -27,6 +33,7 @@ Los algoritmos elegidos para la posterior extracción de los modelos han sido:
 - Árboles de Decisión (C5.0)
 - SVM
 
+### Medidas de bondad
 Las medidas de bondad con las que hemos elegido medir los resultados de los modelos extraidos son:
 - Curva ROC
 - AUC
