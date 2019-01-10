@@ -1,3 +1,4 @@
+#Carga de librer韆s
 library(caret)
 library(mlbench)
 library(doParallel)
@@ -13,21 +14,22 @@ library(caretEnsemble)
 #---------------------
 wine <- read.delim("winequality-red.csv", sep = ",", head = TRUE)
 
-# comprobamos el dataset
+# Comprobamos el dataset
 dim(wine) 
 colnames(wine)
 rownames(wine)
 wine[2:10, 1:12]
 str(wine)
 
-
-# discretizamos la columna quality en tres posibles valores: bad, average y good
-# para poder convertirlo en un problema de clasificacion
+# Teniendo en cuenta los resultados obtenidos tras aplicar t閏nicas de clustering en el fichero 'clustering.R' asociado a este proyecto,
+# determinamos que ser韆 necesaria una discretizaci髇 del atributo Quality en dos posibles valores: Bad y Good
+# De este modo, estamos convirtiendo nuestro problema a uno de clasificaci髇.
 wine2 <- wine
 wine2$quality <- ifelse(wine$quality < 6, 'bad', 'good')
 wine2$quality <- ordered(wine2$quality, levels = c('bad', 'good')) # ordenados para visualizaciones
 print(head(wine2, 10))
-# podemos ver que el tipo de wine2 ahora es una etiqueta
+
+# Podemos ver que el atributo 'Quality' en el conjunto 'wine2' ahora es una etiqueta
 str(wine2)
 
 barplot(table(wine$quality))
@@ -36,9 +38,8 @@ barplot(table(wine2$quality))
 #---------------------
 #   Visualizacion
 #---------------------
-# TODO visualizaci贸n de los atributos, valores (medias, modas,...), ditribuciones, diagramas, etc
 
-# Distribuci贸n de la calidad en los vinos del dataset
+# Distribuci髇n de la calidad en los vinos del dataset
 ggplot(data = wine, aes(x = quality)) + geom_bar(width = 1, color = 'black',fill = I('red'))
 grid.arrange(ggplot(data = wine2, aes(x = quality)) + geom_bar(width = 1, color = 'black',fill = I('red')), top="Distribuci贸n de ejemplos por clase")
 
@@ -135,12 +136,9 @@ ggplot(data=wine2, aes(x=as.factor(quality), y=residual.sugar)) + geom_jitter( a
        geom_boxplot(alpha = 0.8,color = 'red') + scale_y_continuous(lim = c(0,5)) +
        stat_summary(fun.y = "mean", geom = "point", color = "blue", shape = 8, size = 4)
 
-#Enfrentando las dos caracter铆sticas con m谩s correlaci贸n con la calidad
+#Enfrentando las dos caracter韘ticas con m谩s correlaci贸n con la calidad
 ggplot(wine2, aes( x = volatile.acidity, y = alcohol, color=quality)) + geom_jitter(alpha = 1 ) +
         scale_color_manual(values=c("red", "green", "blue"))
-     
-# TODO clustering como parte de la visualizaci贸n
-# puede ser que el n煤mero de etiquetas (bad, average y good) se vea mas claro en este apartado
 
 
 #---------------------
