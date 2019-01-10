@@ -50,12 +50,12 @@ nc <- NbClust(wine.stand, min.nc=2, max.nc=15, method="kmeans")
 
 
 jpeg('kmeans_elbow.jpeg')
-fviz_nbclust(wine.stand, kmeans,method = c("wss"))+geom_vline(xintercept = 6, linetype = 2)
+fviz_nbclust(wine.stand, kmeans,method = c("wss"))+geom_vline(xintercept = 2, linetype = 2)
 dev.off()
 
 
 
-###################SILHOUETTE
+###################NbClust SILHOUETTE
 
 nc_silhouette<- NbClust(wine.stand, min.nc=2, max.nc=15, method="kmeans", index="silhouette")
 nc_silhouette
