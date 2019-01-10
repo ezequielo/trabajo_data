@@ -2,7 +2,7 @@
 Proyecto desarrollado para la asignatura Fundamentos de Ingeniería de Datos impartida en el Máster de Ingeniería del Software (Universidad de Sevilla).
 
 ## Conjunto de Datos
-El conjunto de datos elegido para su posterior análisis se encuentra en este [archivo](winequality-white.csv).
+El conjunto de datos elegido para su posterior análisis se encuentra en este [archivo](winequality-red.csv).
 
 ## Visualización
 Las gráficas de visualización extraida se encuentran en esta [carpeta de Google Drive](https://drive.google.com/drive/folders/1_2z5jXTZoaz1GhUMGMR4sfZFwwfNUDNt?usp=sharing).
