@@ -23,14 +23,14 @@ head(wine)
 
 wine.stand <- scale(wine[-1])  # To standarize the variables
 head(wine.stand)
-k.means.wine <- kmeans(wine, 3) # k = 3
-# K-Means con 3 clusters, tenemos tres etiquetas de salida
-k.means.fit <- kmeans(wine.stand, 3) # k = 3
+k.means.wine <- kmeans(wine, 2) # k = 2
+# K-Means con 2 clusters, tenemos dos etiquetas de salida
+k.means.fit <- kmeans(wine.stand, 2) # k = 2
 ## observamos los atributos tras aplicar el keans a nuestro conjunto de datos escalado
 attributes(k.means.fit)
 ##visualizamos y guardamos
-jpeg('kmeans3.jpeg')
-plot(wine.stand, col=k.means.fit$cluster, main="Tres clusters")
+jpeg('kmeans2.jpeg')
+plot(wine.stand, col=k.means.fit$cluster, main="Dos clusters")
 
 dev.off()
 ##TODO
@@ -49,13 +49,13 @@ fviz_cluster(k.means.fit, data = wine.stand, ellipse.type =  "convex",stand = FA
 ###METODOS DIFERENTES PARA LA K
 ##1)Elbow method for k-means clustering 
 wss <- 0
-for (i in 3:15) {
+for (i in 2:15) {
   km.out <- kmeans(wine.stand, centers = i, nstar=20) 
   wss[i] <- km.out$tot.withinss
 }
 jpeg('clusters_linea.jpg')
 
-plot(3:15, wss, type = "b",  col="mediumseagreen", xlab = "Number of Clusters",
+plot(2:15, wss, type = "b",  col="mediumseagreen", xlab = "Number of Clusters",
      ylab = "Within groups sum of squares")
 abline(v = 3, lty =2)
 dev.off()
@@ -73,7 +73,7 @@ fviz_nbclust(wine.stand, kmeans, method = "wss") +
 # MINIMO DE Ks=3 tenemos 3 etiquetas de salida de clasificacion 
 
 set.seed(123)
-nc <- NbClust(wine.stand, min.nc=3, max.nc=15, method="kmeans")
+nc <- NbClust(wine.stand, min.nc=2, max.nc=15, method="kmeans")
 
 ##TODO
 fviz_nbclust(wine.stand, kmeans, method = "wss") +
@@ -113,10 +113,5 @@ dev.off()
 
 #Conclusion k=3
 
-
-res.mca <- MCA(wine.stand, graph=FALSE)
-fviz_mca_var(res.mca)
-fviz_mca_var(res.mca, alpha.var = "contrib") +
-  theme_minimal()
 
 
