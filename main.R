@@ -6,6 +6,7 @@ library(gridExtra)
 library(ggplot2)
 library(ROCR)
 library(pROC)
+library(caretEnsemble)
 
 #---------------------
 #   Carga de datos
@@ -200,16 +201,19 @@ print(nb_model)
 
 # neural network
 nn_model <- train(quality ~ ., training, method = 'nnet', trControl = control)
+print(nn_model)
 
 # decision tree
 dt_model <- train(quality ~ ., training, method = "C5.0", trControl = control)
+print(dt_model)
 
 # nearest neighbour
 near_model <- train(quality ~ ., training, method = "knn", trControl = control)
+print(near_model)
 
 # svm
 svm_model <- train(quality ~ ., training, method = "svmLinear2",  trControl = control, probability = TRUE)
-
+print(svm_model)
 
 # comparamos los modelos obtenidos
 models <- list(
@@ -227,6 +231,25 @@ dotplot(resamples, metric = "ROC")
 
 # podemos ver como de buenos son cada uno de los modelos entrenados con los diagramas que muestran
 # el valor del area bajo la curva ROC
+
+
+#---------------------
+# stacking
+#---------------------
+
+# models - cogemos el cnnet y C5.0 porque tienen baja correlacion (mirar correlacion entre modelos)
+algorithmList <- c('nnet', 'C5.0')
+models <- caretList(quality~., data=training, trControl=control, methodList=algorithmList)
+
+# correlation entre modelos
+results = resamples(models)
+modelCor(results)
+splom(results)
+
+# stacking
+stackControl <- trainControl(method="cv", number=10, allowParallel = TRUE, savePredictions=TRUE, classProbs=TRUE, summaryFunction = twoClassSummary)
+stack.glm <- caretStack(models, method="glm", metric="ROC", trControl=stackControl)
+print(stack.glm)
 
 
 #---------------------
@@ -257,18 +280,28 @@ svmPrediction <- prediction(svmProb[,2], test$quality)
 svmPerformance <- performance(svmPrediction, 'tpr', 'fpr')
 
 
+stackProb <- predict(stack.glm, test, type = 'prob')
+stackPrediction <- prediction(stackProb, test$quality)
+stackPerformance <- performance(stackPrediction, 'tpr', 'fpr')
+
+
+
 # pintamos las curvas roc
 plot(nbPerformance, col = "orange", main = "ROC curves")
 plot(dtPerformance, add = TRUE, col = "blue")
 plot(nnPerformance, add = TRUE, col = "red")
 plot(nearPerformance, add = TRUE, col = "green")
 plot(svmPerformance, add = TRUE, col = "pink")
+plot(stackPerformance, add = TRUE, col = "black")
+stackPerformance
 legend("bottomright", title= "Predictors",
-       legend = c("NB", "DT", "NN", "kNN", "SVM"), 
-       col=c("orange", "blue", "red", "green", "pink"), lty=1, cex=0.8)
+       legend = c("NB", "DT", "NN", "kNN", "SVM", "Stack"), 
+       col=c("orange", "blue", "red", "green", "pink", "black"), lty=1, cex=0.8)
 
 # como podemos ver, el rendimiento de los modelos ha sido practicamente igual 
 # al de los test, el DT sigue siendo el mejor, a continuacion tenemos nb, nn y svm 
 # con valores parecidos y por ultimo el knn con el peor valor
+
+
 
 
