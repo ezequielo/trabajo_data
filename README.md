@@ -1,13 +1,15 @@
 # Análisis de la Calidad del Vino Rojo - FID - Grupo 6
 Proyecto desarrollado para la asignatura Fundamentos de Ingeniería de Datos impartida en el Máster de Ingeniería del Software (Universidad de Sevilla).
 
+Todo el script a ejecutar está almacenado en el archivo [main.R](main.R). A excepción del proceso de clustering que se encuentra alojado en el fichero [clustering.R](clustering.R).
+
 ## Conjunto de Datos
 El conjunto de datos elegido para su posterior análisis se encuentra en este [archivo](winequality-red.csv).
 
 ## Visualización
 Las gráficas de visualización extraida se encuentran en esta [carpeta de Google Drive](https://drive.google.com/drive/folders/1_2z5jXTZoaz1GhUMGMR4sfZFwwfNUDNt?usp=sharing).
 En la carpeta se recogen las gráficas de:
-- Clustering
+- Clustering ([Se desarrolla en este archivo](winequality-red.csv))
 - Visualización de las distribuciones
 - Comparación entre variables
 - Matriz de correlación
@@ -47,8 +49,6 @@ una validación cruzada de los datos de entrenamiento. El valor de k elegido ha 
 Tras llevar a cabo la extracción de los modelos resultantes de la aplicación de los algoritmos al conjunto de entrenamiento, 
 hemos medido el rendimiento de cada uno con la medida de bondad AUC.
 En esta medición hemos determinado que el modelo que mejor rendimiento da es el de Árboles de Decisión.
-
-![img](http://i.imgur.com/yourfilename.png)
 
 ### Stacking
 Se ha hecho uso del método de stacking para comparar los modelos generados y ver si podemos obtener uno mejor.
